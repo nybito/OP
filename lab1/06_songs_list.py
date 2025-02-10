@@ -24,7 +24,11 @@ violator_songs_list = [
 # Лучше заранее вычислить необходимое, а затем в print(xxx, yyy, zzz)
 
 # TODO здесь ваш код
-
+time_halo = next(song[1] for song in violator_songs_list if song[0] == 'Halo')
+time_enjoy = next(song[1] for song in violator_songs_list if song[0] == 'Enjoy the Silence')
+time_clean = next(song[1] for song in violator_songs_list if song[0] == 'Clean')
+total_time_list = round(time_halo + time_enjoy + time_clean, 2)
+print(f'Три песни звучат {total_time_list} минут')
 # Есть словарь песен группы Depeche Mode
 violator_songs_dict = {
     'World in My Eyes': 4.76,
@@ -42,3 +46,9 @@ violator_songs_dict = {
 #   А другие три песни звучат ХХХ минут
 
 # TODO здесь ваш код
+
+time_sweetest = violator_songs_dict['Sweetest Perfection']
+time_policy = violator_songs_dict['Policy of Truth']
+time_blue = violator_songs_dict['Blue Dress']
+total_time_dict = round(time_sweetest + time_policy + time_blue, 2)
+print(f'А другие три песни звучат {total_time_dict} минут')
