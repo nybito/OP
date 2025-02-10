@@ -53,3 +53,19 @@ print('Лампа -', lamps_quantity, 'шт, стоимость', lamps_cost, '�
 # Это задание на ручное вычисление - что бы потом понять как работают циклы и насколько с ними проще жить.
 
 # TODO здесь ваш код
+table_quantity = store[goods['Стол']][0]['quantity'] + store[goods['Стол']][1]['quantity']
+table_cost = store[goods['Стол']][0]['quantity'] * store[goods['Стол']][0]['price'] \
+             + store[goods['Стол']][1]['quantity'] * store[goods['Стол']][1]['price']
+print(f'Стол - {table_quantity}, стоимость {table_cost} руб')
+
+couch_quantity = store[goods['Диван']][0]['quantity'] + store[goods['Диван']][1]['quantity']
+couch_cost = store[goods['Диван']][0]['quantity'] * store[goods['Диван']][0]['price'] \
+             + store[goods['Диван']][1]['quantity'] * store[goods['Диван']][1]['price']
+print(f'Диван - {couch_quantity}, стоимость {couch_cost} руб')
+
+chair_quantity = store[goods['Стул']][0]['quantity'] + store[goods['Стул']][1]['quantity'] \
+                 + store[goods['Стул']][2]['quantity']
+chair_cost = store[goods['Стул']][0]['quantity'] * store[goods['Стул']][0]['price'] \
+             + store[goods['Стул']][1]['quantity'] * store[goods['Стул']][1]['price'] \
+             + store[goods['Стул']][2]['quantity'] * store[goods['Стул']][2]['price']
+print(f'Стул - {chair_quantity}, стоимость {chair_cost} руб')
