@@ -250,6 +250,12 @@ git status - проверка состояния вашего репозитор
 git commit - сохранение "Слепка" изменений вашего репозитория.\
 git push - отправление изменений в облачное хранилище Гитхаба.\
 
+# Список источников:
+https://vertex-academy.com/tutorials/ru/git-osnovy-dlya-nachinayuschih/ \
+https://otus.ru/journal/rabota-s-git-komanda-commit/#%D0%9A%D0%BE%D0%BC%D0%BC%D0%B8%D1%82_%E2%80%93_%D1%8D%D1%82%D0%BE%E2%80%A6 \
+https://git-scm.com/book/ru/v2/%D0%9E%D1%81%D0%BD%D0%BE%D0%B2%D1%8B-Git-%D0%97%D0%B0%D0%BF%D0%B8%D1%81%D1%8C-%D0%B8%D0%B7%D0%BC%D0%B5%D0%BD%D0%B5%D0%BD%D0%B8%D0%B9-%D0%B2-%D1%80%D0%B5%D0%BF%D0%BE%D0%B7%D0%B8%D1%82%D0%BE%D1%80%D0%B8%D0%B9 \
+https://githowto.com/ru/more_setup \
+https://doka.guide/tools/markdown/ \
 
 
 
