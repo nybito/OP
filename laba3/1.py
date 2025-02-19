@@ -1,17 +1,15 @@
 #РЕКУРСИЯ
 def unpack_recursive(lst):
     result = []
-    for item in lst:
-        if isinstance(item, (list, tuple, set, dict)):
-            # если элемент - это структура, рекурсивно распаковываем его
-            result.extend(unpack_recursive(item))
-        elif isinstance(item, dict):
-            # если элемент - это словарь, распаковываем ключи и значения
-            result.extend(item.keys())
-            result.extend(item.values())
-        else:
-            # если это базовый тип, добавляем его в результат
-            result.append(item)
+    if isinstance(lst, (list, tuple, set)):
+        for item in lst:
+            result.extend(unpack_recursive(item))  # Рекурсивно обрабатываем вложенные элементы
+    elif isinstance(lst, dict):
+        for key, value in lst.items():
+            result.append(key)  # Добавляем ключи
+            result.append(value)  # Добавляем значения
+    else:
+        result.append(lst)  # Добавляем одиночный элемент
     return result
     
 # Не рекурсия
