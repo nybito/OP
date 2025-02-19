@@ -36,8 +36,8 @@ nested_list = [None, [1, ({2, 3}, {'foo': 'bar'})]]
 
 # Рекурсивный подход
 result_recursive = unpack_recursive(nested_list)
-print(result_recursive)  # Вывод: [None, 1, 2, 3, 'foo', 'bar']
+print(result_recursive)
 
 # Итеративный подход
 result_iterative = unpack_iterative(nested_list)
-print(result_iterative)  # Вывод: [None, 1, 2, 3, 'foo', 'bar']
+print(result_iterative)
