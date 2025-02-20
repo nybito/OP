@@ -39,3 +39,24 @@ print(result_recursive)
 # Итеративный подход
 result_iterative = unpack_iterative(nested_list)
 print(result_iterative)
+
+def func_recursion(i):
+    if i == 2:
+        return -1.5
+    if i == 1:
+        return 0.3
+    return (func_recursion(i-1) * func_recursion(i-2) * ((i - 1)**2/(i+1)**3))
+print(func_recursion(100))
+
+def func_iter(i):
+    if i == 1:
+        return 0.3
+    if i == 2:
+        return -1.5
+    w = [0] * (i+1)
+    w[1] = 0.3
+    w[2] = -1.5
+    for n in range(3,i+1):
+        w[n] = (w[n-1] * w[n-2] * ((n-1)**2/(n+1)**3))
+    return(w[i])
+print(func_iter(10))
