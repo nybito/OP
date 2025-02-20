@@ -9,6 +9,6 @@
 
 # Используемые материалы:
 
-1. [Списки (list). Функции и методы списков]([https://vertex-academy.com/tutorials/ru/git-osnovy-dlya-nachinayuschih/](https://pythonworld.ru/tipy-dannyx-v-python/spiski-list-funkcii-i-metody-spiskov.html))
+1. [Списки (list). Функции и методы списков](https://pythonworld.ru/tipy-dannyx-v-python/spiski-list-funkcii-i-metody-spiskov.html)
 2. [Списки, кортежи и словари]([https://vertex-academy.com/tutorials/ru/git-osnovy-dlya-nachinayuschih/](https://metanit.com/python/tutorial/3.1.php))
 3. [Как работает рекурсия]([Основы Гит](https://vertex-academy.com/tutorials/ru/git-osnovy-dlya-nachinayuschih/)) 
