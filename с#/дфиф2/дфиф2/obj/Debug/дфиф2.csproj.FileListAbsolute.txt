@@ -1,0 +1,10 @@
+C:\Users\Ilnar\source\repos\дфиф2\дфиф2\bin\Debug\дфиф2.exe.config
+C:\Users\Ilnar\source\repos\дфиф2\дфиф2\bin\Debug\дфиф2.exe
+C:\Users\Ilnar\source\repos\дфиф2\дфиф2\bin\Debug\дфиф2.pdb
+C:\Users\Ilnar\source\repos\дфиф2\дфиф2\obj\Debug\дфиф2.csproj.AssemblyReference.cache
+C:\Users\Ilnar\source\repos\дфиф2\дфиф2\obj\Debug\дфиф2.Form1.resources
+C:\Users\Ilnar\source\repos\дфиф2\дфиф2\obj\Debug\дфиф2.Properties.Resources.resources
+C:\Users\Ilnar\source\repos\дфиф2\дфиф2\obj\Debug\дфиф2.csproj.GenerateResource.cache
+C:\Users\Ilnar\source\repos\дфиф2\дфиф2\obj\Debug\дфиф2.csproj.CoreCompileInputs.cache
+C:\Users\Ilnar\source\repos\дфиф2\дфиф2\obj\Debug\дфиф2.exe
+C:\Users\Ilnar\source\repos\дфиф2\дфиф2\obj\Debug\дфиф2.pdb
