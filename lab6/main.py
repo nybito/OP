@@ -12,18 +12,18 @@ def calculate():
             a = float(entry_a.get())
             b = float(entry_b.get())
             h = float(entry_h.get())
-            volume = Para(a,b,h)[0]
-            surface_area = Para(a,b,h)[1]
+            volume = para.Para(a,b,h)[0]
+            surface_area = para.Para(a,b,h)[1]
 
         elif shape == "Тетраэдр":
             a = float(entry_a.get())
-            volume = Tetra(a)[0]
-            surface_area = Tetra(a)[1]
+            volume = tetra.Tetra(a)[0]
+            surface_area = tetra.Tetra(a)[1]
 
         elif shape == "Шар":
             r = float(entry_r.get())
-            volume = Shar(r)[0]
-            surface_area = Shar(r)[1]
+            volume = shar.Shar(r)[0]
+            surface_area = shar.Shar(r)[1]
 
         else:
             raise ValueError("Неверная фигура")
@@ -36,7 +36,6 @@ def calculate():
 
     except ValueError as ve:
         messagebox.showerror("Ошибка", str(ve))
-
 def save_report():
     shape = geometry_type.get()
     volume = result_label.cget("text").split("\n")[0].split(":")[1].strip()
