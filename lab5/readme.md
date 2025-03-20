@@ -16,16 +16,14 @@ def is_prime(n):
 
 def generate_primes(limit):
     """Генерация простых чисел до заданного предела."""
-    primes = []  # Создаем пустой список для хранения простых чисел
     for num in range(2, limit):  # Проходим по числам от 2 до предела
         if is_prime(num):  # Проверяем, является ли текущее число простым
-            primes.append(num)  # Если да, добавляем его в список простых чисел
-    return primes  # Возвращаем список простых чисел
+            yield num  # Если да, возвращаем генератор для простых чисел
 
 def sum_primes(limit):
     """Суммирование простых чисел до заданного предела."""
     primes = generate_primes(limit)  # Генерируем простые числа до заданного предела
-    return reduce(lambda x, y: x + y, primes)  # Подсчитываем сумму простых чисел с помощью функции reduce
+    return reduce(lambda x, y: x + y, list(primes))  # Подсчитываем сумму простых чисел с помощью функции reduce
 
 # Пример использования
 limit = 100  # Устанавливаем предел для генерации простых чисел
@@ -33,4 +31,7 @@ result = sum_primes(limit)  # Вызываем функцию, чтобы пол
 print(f"Сумма простых чисел до {limit}: {result}")  # Выводим результат на экран
 ```
 
-Скриншот: ![image](https://github.com/user-attachments/assets/5814f630-6163-4f90-a3eb-6946d490e8ae)
+# Скриншот: ![image](https://github.com/user-attachments/assets/5814f630-6163-4f90-a3eb-6946d490e8ae)
+
+# Список источников:
+[Как работает yield](https://habr.com/ru/articles/132554/)
