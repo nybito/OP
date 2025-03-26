@@ -7,7 +7,7 @@ class Figure(abc.ABC):
     def P(self): pass
     def M(self): pass
 
-class Para():
+class Para(Figure):
     def __init__(self,a,b,h,ro):
         self._length = a
         self.width = b
