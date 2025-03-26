@@ -13,7 +13,7 @@ class Para(Figure):
         self.width = b
         self._height = h
         self.ro = ro
-    def __repr__(self):
+    def __str__(self):
         return f"{self.__class__.__name__}()"
     
     def V(self): 
