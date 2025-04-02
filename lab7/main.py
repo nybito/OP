@@ -118,9 +118,9 @@ class GeometryCalculator(BoxLayout):
 
                 Fig = mod.Shar(r,ro)  # Предполагается наличие класса Shar в модуле mod.
 
-            volume_str=f"Объем: {Fig.V}"
-            surface_area_str=f"Площадь поверхности: {Fig.P}"
-            mass_str=f"Масса: {Fig.M}"
+            volume_str=f"Объем: {Fig.V()}"
+            surface_area_str=f"Площадь поверхности: {Fig.P()}"
+            mass_str=f"Масса: {Fig.M()}"
             
             result_text=f"{volume_str}\n{surface_area_str}\n{mass_str}"
             
