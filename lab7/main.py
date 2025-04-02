@@ -1,155 +1,170 @@
-import tkinter as tk
-import tkinter as tk
-from tkinter import messagebox
+import kivy
+import mod
+from kivy.app import App
+from kivy.uix.boxlayout import BoxLayout
+from kivy.uix.label import Label
+from kivy.uix.textinput import TextInput
+from kivy.uix.button import Button
+from kivy.uix.dropdown import DropDown
+from kivy.uix.spinner import Spinner
+from kivy.uix.popup import Popup
 from docx import Document
 import openpyxl
-import math
-from mod import *
-class main:
-    def aaa():
-        def calculate():
-            shape = geometry_type.get()
-            try:
-                if shape == "Параллелепипед":
-                    a = float(entry_a.get())
-                    b = float(entry_b.get())
-                    h = float(entry_h.get())
-                    ro = float(entry_density.get())
-                    Fig = Para(a,b,h,ro)
-                    volume = Fig.V
-                    surface_area = Fig.P
-                    mass = Fig.M
 
-                elif shape == "Тетраэдр":
-                    a = float(entry_a.get())
-                    ro = float(entry_density.get())
-                    Fig = Tetra(a,ro)
-                    volume = Fig.V
-                    surface_area = Fig.P
-                    mass = Fig.M
+# Импортируйте ваши классы для фигур здесь
+# from mod import Para, Tetra, Shar
 
-                elif shape == "Шар":
-                    r = float(entry_r.get())
-                    ro = float(entry_density.get())
-                    Fig = Shar(r,ro)
-                    volume = Fig.V
-                    surface_area = Fig.P
-                    mass = Fig.M
+class GeometryCalculator(BoxLayout):
+    def __init__(self, **kwargs):
+        super(GeometryCalculator, self).__init__(**kwargs)
+        self.orientation = 'vertical'
 
-                else:
-                    raise ValueError("Неверная фигура")
+        self.shape_spinner = Spinner(
+            text='Параллелепипед',
+            values=('Параллелепипед', 'Тетраэдр', 'Шар'),
+            size_hint=(None, None),
+            size=(200, 44)
+        )
+        self.shape_spinner.bind(text=self.update_fields)
 
-                result_text = f"Объем: {round(volume())}\nПлощадь поверхности: {round(surface_area(),2)}\nМасса: {round(mass())}"
-                result_label.config(text=result_text)
+        self.add_widget(Label(text="Выберите фигуру:"))
+        self.add_widget(self.shape_spinner)
 
-            except ValueError as ve:
-                messagebox.showerror("Ошибка", str(ve))
+        self.entry_a = TextInput(hint_text='Длина (a)', multiline=False)
+        self.entry_b = TextInput(hint_text='Ширина (b)', multiline=False)
+        self.entry_h = TextInput(hint_text='Высота (h)', multiline=False)
+        self.entry_r = TextInput(hint_text='Радиус (r)', multiline=False)
+        self.entry_density = TextInput(hint_text='Плотность материала', multiline=False)
 
-        def save_report():
-            shape = geometry_type.get()
-            volume = result_label.cget("text").split("\n")[0].split(":")[1].strip()
-            surface_area = result_label.cget("text").split("\n")[1].split(":")[1].strip()
-            mass = result_label.cget("text").split("\n")[2].split(":")[1].strip()
+        self.add_widget(self.entry_a)
+        self.add_widget(self.entry_b)
+        self.add_widget(self.entry_h)
+        self.add_widget(self.entry_r)
+        self.add_widget(self.entry_density)
 
-            doc = Document()
-            doc.add_heading(f'Отчет по {shape}', level=1)
-            doc.add_paragraph(f'Объем: {volume}')
-            doc.add_paragraph(f'Площадь поверхности: {surface_area}')
-            doc.add_paragraph(f'Mасса: {mass}')
-            doc.save(f'{shape}_report.docx')
+        calculate_button = Button(text="Рассчитать")
+        calculate_button.bind(on_press=self.calculate)
+        
+        save_button = Button(text="Сохранить отчет")
+        save_button.bind(on_press=self.save_report)
 
-            workbook = openpyxl.Workbook()
-            sheet = workbook.active
-            sheet['A1'] = 'Фигура'
-            sheet['B1'] = 'Объем'
-            sheet['C1'] = 'Площадь поверхности'
-            sheet['D1'] = 'Масса'
-            sheet.append([shape, volume, surface_area, mass])
-            workbook.save(f'{shape}_report.xlsx')
+        self.result_label = Label(text="")
+        
+        self.add_widget(calculate_button)
+        self.add_widget(save_button)
+        self.add_widget(self.result_label)
 
-            messagebox.showinfo("Сохранено", "Отчет сохранен в формате .docx и .xlsx.")
+        # Инициализация полей в зависимости от выбранной фигуры
+        self.update_fields()
 
-        def update_fields(*args):
-            if geometry_type.get() == "Параллелепипед":
-                label_a.config(text="Длина (a):")
-                label_b.config(text="Ширина (b):")
-                label_h.config(text="Высота (h):")
-                label_r.config(text="")
-                entry_b.config(state='normal')
-                entry_h.config(state='normal')
-                entry_r.config(state='disabled')
-            elif geometry_type.get() == "Тетраэдр":
-                label_a.config(text="Длина ребра (a):")
-                label_b.config(text="")
-                label_h.config(text="")
-                entry_b.config(state='disabled')
-                entry_h.config(state='disabled')
-                entry_r.config(state='disabled')
-            elif geometry_type.get() == "Шар":
-                label_a.config(text="")
-                label_b.config(text="")
-                label_h.config(text="")
-                label_r.config(text="Радиус:")
-                entry_a.config(state='disabled')
-                entry_b.config(state='disabled')
-                entry_h.config(state='disabled')
-                entry_r.config(state='normal')
+    def update_fields(self, *args):
+        shape = self.shape_spinner.text
+        
+        if shape == "Параллелепипед":
+            self.entry_a.hint_text = "Длина (a)"
+            self.entry_b.hint_text = "Ширина (b)"
+            self.entry_h.hint_text = "Высота (h)"
+            self.entry_r.disabled = True
+            
+            # Enable the relevant fields
+            for entry in [self.entry_a, self.entry_b, self.entry_h]:
+                entry.disabled = False
+            
+            for entry in [self.entry_r]:
+                entry.text = ""
+                entry.disabled = True
+
+        elif shape == "Тетраэдр":
+            self.entry_a.hint_text = "Длина ребра (a)"
+            for entry in [self.entry_b, self.entry_h, self.entry_r]:
+                entry.text = ""
+                entry.disabled = True
+            
+            # Enable the relevant field
+            for entry in [self.entry_a]:
+                entry.disabled = False
+
+        elif shape == "Шар":
+            for entry in [self.entry_a, self.entry_b, self.entry_h]:
+                entry.text = ""
+                entry.disabled = True
+            
+            # Enable the relevant field
+            for entry in [self.entry_r]:
+                entry.hint_text = "Радиус (r)"
+                entry.disabled = False
+
+    def calculate(self, instance):
+        shape = self.shape_spinner.text
+        
+        try:
+            if shape == "Параллелепипед":
+                a = float(self.entry_a.text)
+                b = float(self.entry_b.text)
+                h = float(self.entry_h.text)
+                ro = float(self.entry_density.text)
                 
-        root = tk.Tk()
-        root.title("Геометрический калькулятор")
+                Fig = mod.Para(a,b,h,ro)  # Предполагается наличие класса Para в модуле mod.
+                
+            elif shape == "Тетраэдр":
+                a = float(self.entry_a.text)
+                ro = float(self.entry_density.text)
+                
+                Fig = mod.Tetra(a,ro)  # Предполагается наличие класса Tetra в модуле mod.
 
-        geometry_type = tk.StringVar(value="Параллелепипед")
-        geometry_type.trace_add('write', update_fields)
+            elif shape == "Шар":
+                r = float(self.entry_r.text)
+                ro = float(self.entry_density.text)
 
-        frame = tk.Frame(root)
-        frame.pack(padx=10, pady=10)
+                Fig = mod.Shar(r,ro)  # Предполагается наличие класса Shar в модуле mod.
 
-        label_shape = tk.Label(frame, text="Выберите фигуру:")
-        label_shape.grid(row=0, column=0)
+            volume_str=f"Объем: {Fig.V}"
+            surface_area_str=f"Площадь поверхности: {Fig.P}"
+            mass_str=f"Масса: {Fig.M}"
+            
+            result_text=f"{volume_str}\n{surface_area_str}\n{mass_str}"
+            
+            # Обновление результата на экране
+            self.result_label.text=result_text
 
-        menu_shape = tk.OptionMenu(frame, geometry_type, "Параллелепипед", "Тетраэдр", "Шар")
-        menu_shape.grid(row=0, column=1)
+        except ValueError as ve:
+            popup=Popup(title='Ошибка', content=Label(text=str(ve)), size_hint=(None,None), size=(400,200))
+            popup.open()
 
-        label_a = tk.Label(frame, text="Длина (a):")
-        label_a.grid(row=1, column=0)
+    def save_report(self, instance):
+        
+         # Получение значений из результата 
+         result_lines=self.result_label.text.split("\n")
+         volume=result_lines[0].split(":")[1].strip()
+         surface_area=result_lines[1].split(":")[1].strip()
+         mass=result_lines[2].split(":")[1].strip()
+         
+         shape=self.shape_spinner.text
 
-        entry_a = tk.Entry(frame)
-        entry_a.grid(row=1, column=1)
+         doc=Document()
+         doc.add_heading(f'Отчет по {shape}', level=1)
+         doc.add_paragraph(f'Объем: {volume}')
+         doc.add_paragraph(f'Площадь поверхности: {surface_area}')
+         doc.add_paragraph(f'Mасса: {mass}')
+         doc.save(f'{shape}_report.docx')
 
-        label_b = tk.Label(frame, text="Ширина (b):")
-        label_b.grid(row=2, column=0)
+         workbook=openpyxl.Workbook()
+         sheet=workbook.active
+         sheet['A1']='Фигура'
+         sheet['B1']='Объем'
+         sheet['C1']='Площадь поверхности'
+         sheet['D1']='Масса'
+         
+         sheet.append([shape, volume, surface_area, mass])
+         
+         workbook.save(f'{shape}_report.xlsx')
 
-        entry_b = tk.Entry(frame)
-        entry_b.grid(row=2, column=1)
+         popup=Popup(title='Сохранено', content=Label(text="Отчет сохранен в формате .docx и .xlsx."), size_hint=(None,None), size=(400,200))
+         popup.open()
 
-        label_h = tk.Label(frame, text="Высота (h):")
-        label_h.grid(row=3, column=0)
+class GeometryApp(App):
+    def build(self):
+        return GeometryCalculator()
 
-        entry_h = tk.Entry(frame)
-        entry_h.grid(row=3, column=1)
-
-        label_r = tk.Label(frame, text="Радиус (r):")
-        label_r.grid(row=4, column=0)
-
-        entry_r = tk.Entry(frame)
-        entry_r.grid(row=4, column=1)
-
-        label_density = tk.Label(frame, text="Плотность материала:")
-        label_density.grid(row=5, column=0)
-
-        entry_density = tk.Entry(frame)
-        entry_density.grid(row=5, column=1)
-
-        calculate_button = tk.Button(frame, text="Рассчитать", command=calculate)
-        calculate_button.grid(row=6, column=0, columnspan=2)
-
-        save_button = tk.Button(frame, text="Сохранить отчет", command=save_report)
-        save_button.grid(row=7, column=0, columnspan=2)
-
-        result_label = tk.Label(frame, text="")
-        result_label.grid(row=8, column=0, columnspan=2)
-
-        update_fields()
-
-        root.mainloop()
-aaaa = main.aaa()
+if __name__ == '__main__':
+    GeometryApp().run()
