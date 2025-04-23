@@ -1,0 +1,234 @@
+import pygame
+import sys
+from typing import Optional, Tuple, List
+
+# Инициализация PyGame
+pygame.init()
+
+# Константы
+WIDTH, HEIGHT = 600, 600
+LINE_WIDTH = 15
+BOARD_ROWS, BOARD_COLS = 3, 3
+SQUARE_SIZE = WIDTH // BOARD_COLS
+CIRCLE_RADIUS = SQUARE_SIZE // 3
+CIRCLE_WIDTH = 15
+CROSS_WIDTH = 25
+SPACE = SQUARE_SIZE // 4
+
+# Цвета
+BG_COLOR = (28, 170, 156)
+LINE_COLOR = (23, 145, 135)
+CIRCLE_COLOR = (239, 231, 200)
+CROSS_COLOR = (66, 66, 66)
+
+# Настройка экрана
+screen = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption('Крестики-нолики')
+screen.fill(BG_COLOR)
+
+
+class TicTacToeError(Exception):
+    """Базовое исключение для игры в крестики-нолики"""
+    pass
+
+
+class InvalidMoveError(TicTacToeError):
+    """Исключение при недопустимом ходе"""
+    def __init__(self, message="Недопустимый ход"):
+        self.message = message
+        super().__init__(self.message)
+
+
+class GameOverError(TicTacToeError):
+    """Исключение при попытке сделать ход после окончания игры"""
+    def __init__(self, message="Игра уже завершена"):
+        self.message = message
+        super().__init__(self.message)
+
+
+class Board:
+    """Класс игровой доски"""
+    def __init__(self):
+        self.squares = [[None for _ in range(BOARD_COLS)] for _ in range(BOARD_ROWS)]
+        self.empty_squares = BOARD_ROWS * BOARD_COLS
+        self.game_over = False
+        self.winner = None
+
+    def mark_square(self, row: int, col: int, player: str) -> None:
+        """Пометить клетку для игрока"""
+        if self.game_over:
+            raise GameOverError()
+        
+        if not (0 <= row < BOARD_ROWS and 0 <= col < BOARD_COLS):
+            raise InvalidMoveError("Клетка вне доски")
+        
+        if self.squares[row][col] is not None:
+            raise InvalidMoveError("Клетка уже занята")
+        
+        self.squares[row][col] = player
+        self.empty_squares -= 1
+        
+        # Проверка на победу
+        if self.check_win(row, col, player):
+            self.game_over = True
+            self.winner = player
+        elif self.empty_squares == 0:
+            self.game_over = True
+
+    def check_win(self, row: int, col: int, player: str) -> bool:
+        """Проверить, выиграл ли игрок"""
+        # Проверка строки
+        if all(self.squares[row][c] == player for c in range(BOARD_COLS)):
+            return True
+        
+        # Проверка столбца
+        if all(self.squares[r][col] == player for r in range(BOARD_ROWS)):
+            return True
+        
+        # Проверка диагоналей
+        if row == col and all(self.squares[i][i] == player for i in range(BOARD_ROWS)):
+            return True
+        
+        if row + col == BOARD_ROWS - 1 and all(self.squares[i][BOARD_ROWS-1-i] == player for i in range(BOARD_ROWS)):
+            return True
+        
+        return False
+
+    def is_full(self) -> bool:
+        """Проверить, заполнена ли доска"""
+        return self.empty_squares == 0
+
+    def reset(self) -> None:
+        """Сбросить доску"""
+        self.squares = [[None for _ in range(BOARD_COLS)] for _ in range(BOARD_ROWS)]
+        self.empty_squares = BOARD_ROWS * BOARD_COLS
+        self.game_over = False
+        self.winner = None
+
+
+class Game:
+    """Класс игры"""
+    def __init__(self):
+        self.board = Board()
+        self.player = 'X'  # X ходит первым
+        self.running = True
+        self.font = pygame.font.SysFont('Arial', 40)
+        
+        # Рисуем начальное состояние доски
+        self.draw_lines()
+
+    def draw_lines(self) -> None:
+        """Нарисовать линии игровой доски"""
+        # Горизонтальные линии
+        pygame.draw.line(screen, LINE_COLOR, (0, SQUARE_SIZE), (WIDTH, SQUARE_SIZE), LINE_WIDTH)
+        pygame.draw.line(screen, LINE_COLOR, (0, 2 * SQUARE_SIZE), (WIDTH, 2 * SQUARE_SIZE), LINE_WIDTH)
+        
+        # Вертикальные линии
+        pygame.draw.line(screen, LINE_COLOR, (SQUARE_SIZE, 0), (SQUARE_SIZE, HEIGHT), LINE_WIDTH)
+        pygame.draw.line(screen, LINE_COLOR, (2 * SQUARE_SIZE, 0), (2 * SQUARE_SIZE, HEIGHT), LINE_WIDTH)
+
+    def draw_figures(self) -> None:
+        """Нарисовать крестики и нолики на доске"""
+        for row in range(BOARD_ROWS):
+            for col in range(BOARD_COLS):
+                if self.board.squares[row][col] == 'O':
+                    pygame.draw.circle(
+                        screen, CIRCLE_COLOR, 
+                        (col * SQUARE_SIZE + SQUARE_SIZE // 2, row * SQUARE_SIZE + SQUARE_SIZE // 2), 
+                        CIRCLE_RADIUS, CIRCLE_WIDTH
+                    )
+                elif self.board.squares[row][col] == 'X':
+                    # Первая линия X
+                    pygame.draw.line(
+                        screen, CROSS_COLOR,
+                        (col * SQUARE_SIZE + SPACE, row * SQUARE_SIZE + SQUARE_SIZE - SPACE),
+                        (col * SQUARE_SIZE + SQUARE_SIZE - SPACE, row * SQUARE_SIZE + SPACE),
+                        CROSS_WIDTH
+                    )
+                    # Вторая линия X
+                    pygame.draw.line(
+                        screen, CROSS_COLOR,
+                        (col * SQUARE_SIZE + SPACE, row * SQUARE_SIZE + SPACE),
+                        (col * SQUARE_SIZE + SQUARE_SIZE - SPACE, row * SQUARE_SIZE + SQUARE_SIZE - SPACE),
+                        CROSS_WIDTH
+                    )
+
+    def show_game_over(self) -> None:
+        """Показать сообщение о завершении игры"""
+        if self.board.winner:
+            text = f"Игрок {self.board.winner} победил!"
+        else:
+            text = "Ничья!"
+        
+        text_surface = self.font.render(text, True, (255, 255, 255))
+        text_rect = text_surface.get_rect(center=(WIDTH//2, HEIGHT//2))
+        
+        # Создаем полупрозрачный фон для текста
+        background = pygame.Surface((text_rect.width + 20, text_rect.height + 20))
+        background.set_alpha(200)
+        background.fill((0, 0, 0))
+        
+        screen.blit(background, (text_rect.x - 10, text_rect.y - 10))
+        screen.blit(text_surface, text_rect)
+        
+        # Добавляем текст для перезапуска
+        restart_text = self.font.render("Нажмите R для перезапуска", True, (255, 255, 255))
+        restart_rect = restart_text.get_rect(center=(WIDTH//2, HEIGHT//2 + 50))
+        
+        screen.blit(restart_text, restart_rect)
+
+    def next_turn(self) -> None:
+        """Передать ход следующему игроку"""
+        self.player = 'O' if self.player == 'X' else 'X'
+
+    def process_click(self, row: int, col: int) -> None:
+        """Обработать клик игрока"""
+        try:
+            if not self.board.game_over:
+                self.board.mark_square(row, col, self.player)
+                if not self.board.game_over:
+                    self.next_turn()
+        except TicTacToeError as e:
+            print(f"Ошибка: {e}")
+
+    def reset(self) -> None:
+        """Сбросить игру"""
+        self.board.reset()
+        self.player = 'X'
+        screen.fill(BG_COLOR)
+        self.draw_lines()
+
+    def run(self) -> None:
+        """Основной игровой цикл"""
+        while self.running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    self.running = False
+                
+                if event.type == pygame.MOUSEBUTTONDOWN and not self.board.game_over:
+                    mouseX = event.pos[0]  # x-координата
+                    mouseY = event.pos[1]  # y-координата
+                    
+                    clicked_row = mouseY // SQUARE_SIZE
+                    clicked_col = mouseX // SQUARE_SIZE
+                    
+                    self.process_click(clicked_row, clicked_col)
+                
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_r:
+                        self.reset()
+            
+            self.draw_figures()
+            
+            if self.board.game_over:
+                self.show_game_over()
+            
+            pygame.display.update()
+        
+        pygame.quit()
+        sys.exit()
+
+
+if __name__ == "__main__":
+    game = Game()
+    game.run()
