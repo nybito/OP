@@ -660,7 +660,6 @@ def func(lst=None):
 def greet(name: str, age: int = 18) -> str:
     return f"{name} is {age} years old"
 ```
-# Ответы на вопросы к экзамену по Python
 
 ## 11. Функции. Документирование и тестирование функций
 
